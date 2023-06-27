@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
+import { productsRouter } from './routes/productsRouter';
 
 const app = express()
 const port = process.env.PORT || 3010
@@ -7,14 +8,15 @@ const port = process.env.PORT || 3010
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-const products = [{id: 1, title: 'orange'}, {id: 2, title: 'tomato'}]
-
 app.get('/', (req: Request, res: Response) => {
   let helloMessage = 'Hello world!!!!'
   res.send(helloMessage)
 })
 
-app.get('/products', (req: Request, res: Response) => {
+
+app.use('/products', productsRouter);
+
+/* app.get('/products', (req: Request, res: Response) => {
   const param = req.query.title
 
   if(param) {
@@ -22,27 +24,17 @@ app.get('/products', (req: Request, res: Response) => {
   } 
   res.send(products)
 })
+ */
 
-/* app.get('/products/:productTitle', (req: Request, res: Response) => {
-  let product = products.find(el => el.title === `${req.params.productTitle}`); 
-
-  if (product){ 
-  res.send(product)
-  } else {
-    res.status(404).send('<h1>404! Page not found</h1>');
-  }
-
-}) */
-
-app.get('/products/:id', (req: Request, res: Response) => {
+/* app.get('/products/:id', (req: Request, res: Response) => {
   const param = req.params.id
 
   if(param) {
     res.send(products.find(el => el.id === +param))
   }
-})
+}) */
 
-app.delete('/products/:id', (req: Request, res: Response) => {
+/* app.delete('/products/:id', (req: Request, res: Response) => {
   const param = req.params.id
 
     for (let i = 0; i < products.length; i++) {
@@ -53,9 +45,9 @@ app.delete('/products/:id', (req: Request, res: Response) => {
       }
     }
     res.send(404)
-})
+}) */
 
-app.post('/products', (req: Request, res: Response) => {
+/* app.post('/products', (req: Request, res: Response) => {
   const newProduct = {
     id: new Date().getSeconds(),
     title: req.body.title
@@ -63,9 +55,9 @@ app.post('/products', (req: Request, res: Response) => {
   products.push(newProduct)
   res.send(204);
 
-}
-)
-app.put('/products/:id', (req: Request, res: Response) => {
+}) */
+
+/* app.put('/products/:id', (req: Request, res: Response) => {
 
   const product = products.find(el => el.id === +req.params.id)
   
@@ -77,7 +69,7 @@ app.put('/products/:id', (req: Request, res: Response) => {
 
   res.send(404);
 
-})
+}) */
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
