@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import { productsRouter } from './routes/productsRouter';
+import { runDb } from './db';
 
 const app = express()
 const port = process.env.PORT || 3010
@@ -71,6 +72,13 @@ app.use('/products', productsRouter);
 
 }) */
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+const startApp = async() => {
+
+  await runDb()
+
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+  })
+}
+
+startApp()

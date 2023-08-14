@@ -10,30 +10,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productsRepositories = void 0;
-const products = [
-    { id: 1, title: "orange" },
-    { id: 2, title: "tomato" },
-];
+const db_1 = require("../db");
+/* const products: Product[] = [
+  { id: 1, title: "orange" },
+  { id: 2, title: "tomato" },
+]; */
 exports.productsRepositories = {
     getProduct(param) {
         return __awaiter(this, void 0, void 0, function* () {
             if (param) {
-                return products.filter((el) => el.title.indexOf(param.toString()) > -1);
+                return db_1.productCollection.find({ title: { $regex: param } }).toArray();
             }
             else {
-                return products;
+                return db_1.productCollection.find({}).toArray();
             }
         });
     },
     removeProduct(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            for (let i = 0; i < products.length; i++) {
-                if (products[i].id === +param) {
-                    products.splice(i, 1);
-                    return true;
-                }
-            }
-            return false;
+            const result = yield db_1.productCollection.deleteOne({ id: param });
+            return result.deletedCount === 1;
         });
     },
     createProduct(title) {
@@ -42,17 +38,14 @@ exports.productsRepositories = {
                 id: new Date().getSeconds(),
                 title: title
             };
-            products.push(newProduct);
+            db_1.productCollection.insertOne(newProduct);
             return newProduct;
         });
     },
     updateProduct(id, title) {
         return __awaiter(this, void 0, void 0, function* () {
-            const product = products.find(el => el.id === id);
-            if (product) {
-                product.title = title;
-                return product;
-            }
+            const result = yield db_1.productCollection.updateOne({ id: id }, { $set: { title: title } });
+            return result.modifiedCount === 1;
         });
     }
 };
