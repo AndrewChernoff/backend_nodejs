@@ -3,6 +3,7 @@ import { NextFunction, Router } from "express";
 import { body, matchedData, query, validationResult } from 'express-validator';
 import express, { Request, Response } from 'express';
 import { productsRepositories } from "../repositories/productsRepositories-db";
+import { productsService } from "../service/service";
 
 
 const validationErrorMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -22,7 +23,7 @@ const titleValidation = body('title')
 productsRouter.get("/", async function(req, res) {
   const param = req.query.title;
     
-    const product: Product | Product[] = await productsRepositories.getProduct(
+    const product: Product | Product[] = await productsService.getProduct(
       param?.toString() as string
     );
     
@@ -34,14 +35,14 @@ productsRouter.get("/", async function(req, res) {
 productsRouter.delete("/:id", async function (req, res) {
   const param = req.params.id;
 
-  const isDeleted: boolean = await productsRepositories.removeProduct(+param);
+  const isDeleted: boolean = await productsService.removeProduct(+param);
   isDeleted ? res.send(204) : res.send(404);
 });
 
 
 productsRouter.post("/", titleValidation, validationErrorMiddleware, async function (req, res) {
   
-  const product: Product = await productsRepositories.createProduct(
+  const product: Product = await productsService.createProduct(
     req.body.title.toString() as string
   );
   if (product) {
@@ -50,7 +51,7 @@ productsRouter.post("/", titleValidation, validationErrorMiddleware, async funct
 });
 
 productsRouter.put("/:id", titleValidation, validationErrorMiddleware, async function (req, res) {
-  const product: /* Product | undefined | */ boolean = await productsRepositories.updateProduct(
+  const product: /* Product | undefined | */ boolean = await productsService.updateProduct(
     +req.params.id,
     req.body.title
   );

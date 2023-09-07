@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.productsRouter = void 0;
 const express_1 = require("express");
 const express_validator_1 = require("express-validator");
-const productsRepositories_db_1 = require("../repositories/productsRepositories-db");
+const service_1 = require("../service/service");
 const validationErrorMiddleware = (req, res, next) => {
     const result = (0, express_validator_1.validationResult)(req);
     if (!result.isEmpty()) {
@@ -27,20 +27,20 @@ const titleValidation = (0, express_validator_1.body)('title')
 exports.productsRouter.get("/", function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const param = req.query.title;
-        const product = yield productsRepositories_db_1.productsRepositories.getProduct(param === null || param === void 0 ? void 0 : param.toString());
+        const product = yield service_1.productsService.getProduct(param === null || param === void 0 ? void 0 : param.toString());
         res.send(product);
     });
 });
 exports.productsRouter.delete("/:id", function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const param = req.params.id;
-        const isDeleted = yield productsRepositories_db_1.productsRepositories.removeProduct(+param);
+        const isDeleted = yield service_1.productsService.removeProduct(+param);
         isDeleted ? res.send(204) : res.send(404);
     });
 });
 exports.productsRouter.post("/", titleValidation, validationErrorMiddleware, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const product = yield productsRepositories_db_1.productsRepositories.createProduct(req.body.title.toString());
+        const product = yield service_1.productsService.createProduct(req.body.title.toString());
         if (product) {
             res.send(product);
         }
@@ -48,7 +48,7 @@ exports.productsRouter.post("/", titleValidation, validationErrorMiddleware, fun
 });
 exports.productsRouter.put("/:id", titleValidation, validationErrorMiddleware, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const product = yield productsRepositories_db_1.productsRepositories.updateProduct(+req.params.id, req.body.title);
+        const product = yield service_1.productsService.updateProduct(+req.params.id, req.body.title);
         product ? res.send(product) : res.send(404);
     });
 });
